@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-CA"><head>
+    <meta charset="utf-8">
+    <title>Ryan Kavanagh&#39;s /dev/brain</title>
+
+    <link rel="stylesheet" href="/main.20de83e53481b8375c5e7286e6f754da9e80ce14ef3cbc1c2cabc905f29a22e6.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+	onload="renderMathInElement(document.body);"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ryan Kavanagh&#39;s academic and personal website. Articles on computer science, programming languages, mathematics, and free software.">
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ryan Kavanagh&#39;s /dev/brain</a>
+
+    <nav class="site-nav">
+      <ul>
+
+	<li><a class="page-link" href="/files/cv.pdf">CV</a></li>
+
+	<li><a class="page-link" href="/blog/">Blog</a></li>
+
+	<li><a class="page-link" href="/publication/">Publications</a></li>
+
+	<li><a class="page-link" href="/projects/">Projects</a></li>
+
+	<li><a class="page-link" href="/contact/">Contact</a></li>
+
+      </ul>
+    </nav>
+
+  </div>
+
+</header>
+<main class="page-content wrapper">
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">The Yoneda Lemma</h1>
+    <div class="post-meta">
+      <time datetime="2016-04-06T10:18:00-04:00" itemprop="datePublished">Apr 6, 2016</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">Ryan Kavanagh</span></span>
+      <br>
+      Tags: <ul class="post-tags"><li><a href="/tags/academia/">academia</a></li><li><a href="/tags/category-theory/">category theory</a></li></ul>
+    </div>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>I had never before realised the immense usefulness of the Yoneda
+lemma. In the past few sections of Mac Lane&rsquo;s and Moerdijk&rsquo;s &ldquo;Sheaves
+in Geometry and Logic&rdquo;, it&rsquo;s been used both as a proof tool and as a
+heuristic for finding the right definition of a functor (in this case,
+the exponential functor in a presheaf category).</p>
+<p>Here is a direct proof that does not require the machinery used by
+CWM. Seeing that there is &ldquo;only one thing you can do&rdquo; at any point of
+the proof, this proof is surely not new (indeed, I suspect it&rsquo;s the
+same proof Prakash Panangaden gave in his category theory lectures at
+McGill in summer 2012).</p>
+<h3 id="the-lemma">The Lemma</h3>
+<p><strong>Lemma (Yoneda).</strong> Let \(F : \mathbf{C} \to \mathbf{Sets}\) be a
+functor from a locally small category \(\mathbf{C}\). Then for all
+objects \(C\) of \(\mathbf{C}\),</p>
+
+$$
+\gdef{\Nat}{\mathrm{Nat}}
+\gdef{\Hom}{\mathrm{Hom}}
+\gdef{\naturalto}{\Rightarrow}
+\Nat(\Hom(C, -), F) \simeq FC,
+$$
+
+
+<p>and this bijection is natural in \(C\) and \(F\).</p>
+<p><em>Proof.</em> We claim that the map</p>
+
+$$
+\begin{aligned}
+\phi : \Nat(\Hom(C, -), F) &\to FC\\
+\eta &\mapsto \eta_C 1_C
+\end{aligned}
+$$
+
+
+<p>is the bijection we want. So see why, observe that each natural
+transformation \(\eta : \Hom(C, -) \naturalto FC\) is uniquely
+determined by the of \(1_C : C \to C\). Indeed, let \(f : C \to D\) be
+arbitrary. Then by naturality of \(\eta\), we must have \(\eta_D f =
+F(f)(\eta_C 1_C)\):</p>
+<object data="2016-04-06-diag1.svg" type="image/svg+xml" class="commdiag">
+<img src="2016-04-06-diag1.png" alt="commuting diagram" />
+</object>
+<p>Accordingly, every element \(c \in FC\) gives rise to the natural
+transformation determined by \(\rho_C(1_C) = c\). So \(\phi\) is
+surjective. Conversely, if for two natural transformations \(\eta\),
+\(\rho\), \(\eta 1_C = \rho 1_C\), then for all \(f : C \to D\),</p>
+
+$$
+\eta_D f = F(f)(\eta_C 1_C) = F(f)(\rho_C 1_C) = \rho_D f
+$$
+
+
+<p>So \(\eta = \rho\) by extensionality. So \(\phi\) is injective.
+So \(\phi\) is a bijection.</p>
+<p>We now show naturality in \(F\). Let \(\gamma : F \naturalto G\) be a
+natural transformation. But this is immediate by the equality
+\((\gamma_C \circ \eta_C) = (\gamma \circ \eta)_C\):</p>
+<object data="2016-04-06-diag2.svg" type="image/svg+xml" class="commdiag">
+<img src="2016-04-06-diag2.png" alt="commuting diagram" />
+</object>
+<p>Next, we show naturality in \(C\). Suppose \(f : C \to D\).
+Then, by naturality of \(\eta\) (see the first diagram), we have
+\(\eta_D f = F(f)(\eta_C 1_C)\), so</p>
+
+$$
+\begin{aligned}
+&\phi_D(\eta_D \circ\Hom(f,D))\\
+&=(\eta_D \circ\Hom(f,D))(1_D)\\
+&=\eta_Df\\
+&=F(f)(\eta_C1_C).
+\end{aligned}
+$$
+
+
+<p>This means that the following diagram describing the naturality of
+\(\phi\) in \(C\) commutes (remark the cancellation of contravariance):</p>
+<object data="2016-04-06-diag3.svg" type="image/svg+xml" class="commdiag">
+<img src="2016-04-06-diag3.png" alt="commuting diagram"/>
+</object>
+<p>So we conclude that \(\phi\) is also natural in \(C\). <strong>Q.E.D.</strong></p>
+<h3 id="questions">Questions</h3>
+<p>As I type this up, a few questions come to mind.</p>
+<ol>
+<li>
+<p>What happens when \(F\) is representable, that is, when it is
+naturally isomorphic to \(\Hom(C, -)\) for some object \(C\) of
+\(\mathbf{C}\)? There&rsquo;s no obvious reason (to me) why
+representability implies that every natural transformation
+\(\Hom(C, -) \naturalto F\) has to be an isomorphism. Is there a
+way to characterise these isomorphisms by means of the Yoneda
+lemma?</p>
+</li>
+<li>
+<p>I remember having found with a friend some cool applications of the
+Yoneda lemma to posets a few summers ago. Unfortunately, they were
+done on a whiteboard and I&rsquo;ve been unable to rediscover them. So:
+what are some cool applications of the Yoneda lemma to posets?</p>
+</li>
+</ol>
+
+  </div>
+
+  <div class="post-comments">
+  <p class="comment-notice"><b>Comments</b>: To comment on this post,
+    send me an email following the template below. Your email address
+    will not be posted, unless you choose to include it in
+    the <span style="font-family: monospace;">link:</span> field.
+    If your web browser is configured to handle <span style="font-family: monospace">mailto:</span> links,
+    click <a href="mailto:Ryan%20Kavanagh%20%3crak@rak.ac%3e?subject=[blog-comment]%20/blog/2016-04-06-the-yoneda-lemma/&amp;body=post_id:%20/blog/2016-04-06-the-yoneda-lemma/%0aauthor:%20[How%20should%20you%20be%20identified?%20Usually%20your%20name%20or%20%22Anonymous%22]%0alink:%20[optional%20link%20to%20your%20website]%0a%0aYour%20comments%20here.%20Markdown%20syntax%20accepted.">comment</a> to load the template into your mail client.
+  </p>
+  <pre class="comment-notice">
+To: Ryan Kavanagh &lt;rak<span>@</span>rak.ac&gt;
+Subject: [blog-comment] /blog/2016-04-06-the-yoneda-lemma/
+
+post_id: /blog/2016-04-06-the-yoneda-lemma/
+author: [How should you be identified? Usually your name or "Anonymous"]
+link: [optional link to your website]
+
+Your comments here. Markdown syntax accepted.</pre>
+
+
+
+
+  <h2>0 Comments</h2>
+
+
+</div>
+
+
+  <div class="post-nav">
+
+    <a class="prev" href="/blog/2016-03-28-on-terminal-objects-and-colimits/">&laquo; On terminal objects and colimits</a>
+
+
+    <a class="next" href="/blog/2016-04-16-specifying-a-custom-mta-path-in-caff/">Specifying a custom MTA path in caff &raquo;</a>
+
+  </div>
+
+</article>
+
+    </main><footer class="site-footer">
+
+  <div class="wrapper">
+
+      <p>&copy; Ryan Kavanagh, 2007&ndash;2023</p>
+
+  </div>
+
+</footer>
+</body>
+</html>

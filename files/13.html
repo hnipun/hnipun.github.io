@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Multi-task BERT in DeepPavlov &mdash; DeepPavlov 1.5.0 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/my_blocks.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/deeppavlov.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script async="async" src="/_/static/javascript/readthedocs-doc-embed.js"></script>
+
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Context Question Answering" href="SQuAD.html" />
+    <link rel="prev" title="Hyperparameters optimization" href="../hypersearch.html" />
+
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="/_/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "builder": "sphinx", "canonical_url": null, "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "features/models/multitask_bert", "programming_language": "py", "project": "deeppavlov", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "UA-139843736-4", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="/_/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../../index.html">
+
+
+
+
+            <img src="../../_static/deeppavlov.png" class="logo" alt="Logo"/>
+
+          </a>
+
+
+
+
+
+              <div class="version">
+                latest
+              </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/installation.html#install-with-pip">Install with pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/installation.html#install-from-source">Install from source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/installation.html#editable-install">Editable install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/installation.html#docker-images">Docker Images</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro/quick_start.html">QuickStart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/quick_start.html#command-line-interface-cli">Command line interface (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/quick_start.html#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/quick_start.html#using-gpu">Using GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/quick_start.html#pretrained-models">Pretrained models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/quick_start.html#docker-images">Docker images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/quick_start.html#out-of-the-box-pretrained-models">Out-of-the-box pretrained models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#text-question-answering">Text Question Answering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#open-domain-question-answering">Open-Domain Question Answering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#knowledge-base-question-answering">Knowledge Base Question Answering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#classification-insult-and-paraphrase-detection-sentiment-analysis-topic-classification">Classification (insult and paraphrase detection, sentiment analysis, topic classification)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#name-entity-recognition">Name Entity Recognition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#entity-extraction">Entity Extraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/quick_start.html#spelling-correction">Spelling Correction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro/overview.html">General concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/overview.html#key-concepts">Key Concepts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro/configuration.html">Configuration file</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/configuration.html#nested-configuration-files">Nested configuration files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/configuration.html#variables">Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/configuration.html#training">Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#train-config">Train config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#train-parameters">Train Parameters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../intro/configuration.html#metrics">Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#datasetreader">DatasetReader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#datalearningiterator-and-datafittingiterator">DataLearningIterator and DataFittingIterator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/configuration.html#inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/configuration.html#model-configuration">Model Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#preprocessors">Preprocessors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#tokenizers">Tokenizers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#embedders">Embedders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intro/configuration.html#vectorizers">Vectorizers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro/python.html">Python pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Models overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#models">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#ner-model-docs">NER model <span class="xref std std-doc">[docs]</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#classification-model-docs">Classification model <span class="xref std std-doc">[docs]</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#automatic-spelling-correction-model-docs">Automatic spelling correction model <span class="xref std std-doc">[docs]</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#ranking-model-docs">Ranking model <span class="xref std std-doc">[docs]</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#tf-idf-ranker-model-docs">TF-IDF Ranker model <span class="xref std std-doc">[docs]</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#question-answering-model-docs">Question Answering model <span class="xref std std-doc">[docs]</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#odqa-docs">ODQA <span class="xref std std-doc">[docs]</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#automl">AutoML</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#hyperparameters-optimization-docs">Hyperparameters optimization <span class="xref std std-doc">[docs]</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#embeddings">Embeddings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../overview.html#pre-trained-embeddings-docs">Pre-trained embeddings <span class="xref std std-doc">[docs]</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#examples-of-some-models">Examples of some models</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pretrained_vectors.html">Pre-trained embeddings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pretrained_vectors.html#bert">BERT</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pretrained_vectors.html#license">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pretrained_vectors.html#downloads">Downloads</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pretrained_vectors.html#elmo">ELMo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pretrained_vectors.html#id1">Downloads</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pretrained_vectors.html#fasttext">fastText</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pretrained_vectors.html#id2">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pretrained_vectors.html#id3">Downloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pretrained_vectors.html#word-vectors-training-parameters">Word vectors training parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../hypersearch.html">AutoML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../hypersearch.html#cross-validation">Cross-validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../hypersearch.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hypersearch.html#special-parameters-in-config">Special parameters in config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hypersearch.html#results">Results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Models</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Multitask BERT</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#train-config">Train config</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SQuAD.html">Context Question Answering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SQuAD.html#4.1-Predict-using-Python">4.1 Predict using Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SQuAD.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#5.-Train-the-model-on-your-data">5. Train the model on your data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SQuAD.html#5.1-Train-your-model-from-Python">5.1 Train your model from Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="SQuAD.html#Provide-your-data-path">Provide your data path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SQuAD.html#SQuAD-dataset-info">SQuAD dataset info</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SQuAD.html#Train-the-model-using-new-config">Train the model using new config</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="SQuAD.html#5.2-Train-your-model-from-CLI">5.2 Train your model from CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SQuAD.html#6.-Evaluate">6. Evaluate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SQuAD.html#6.1-Evaluate-from-Python">6.1 Evaluate from Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SQuAD.html#6.2-Evaluate-from-CLI">6.2 Evaluate from CLI</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#4.1-Predict-using-Python">4.1 Predict using Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#3.2-Predict-using-CLI">3.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#4.-Evaluation">4. Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#4.1-Evaluate-from-Python">4.1 Evaluate from Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#4.2-Evaluate-from-CLI">4.2 Evaluate from CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#5.1-Train-your-model-from-Python">5.1 Train your model from Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classification.html#Provide-your-data-path">Provide your data path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classification.html#Train-dataset-format">Train dataset format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classification.html#Train-the-model-using-new-config">Train the model using new config</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#5.2-Train-your-model-from-CLI">5.2 Train your model from CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#7.-Simple-few-shot-classifiers">7. Simple few-shot classifiers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#7.1-Few-shot-setting">7.1 Few-shot setting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#7.2-Multiple-languages-support">7.2 Multiple languages support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classification.html#7.3-Dataset-and-Scores">7.3 Dataset and Scores</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="few_shot_classification.html">Few-shot Classification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="few_shot_classification.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="few_shot_classification.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="few_shot_classification.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="few_shot_classification.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="few_shot_classification.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="few_shot_classification.html#4.1-Dataset-format">4.1 Dataset format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="few_shot_classification.html#4.2-Predict-using-Python">4.2 Predict using Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="few_shot_classification.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="few_shot_classification.html#5.-Customize-the-model">5. Customize the model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="NER.html">Named Entity Recognition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="NER.html#4.1-Predict-using-Python">4.1 Predict using Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="NER.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#5.-Evaluate">5. Evaluate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="NER.html#5.1-Evaluate-from-Python">5.1 Evaluate from Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="NER.html#5.2-Evaluate-from-CLI">5.2 Evaluate from CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#6.-Customize-the-model">6. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="NER.html#6.1-Train-your-model-from-Python">6.1 Train your model from Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="NER.html#Provide-your-data-path">Provide your data path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NER.html#Train-dataset-format">Train dataset format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NER.html#Train-the-model-using-new-config">Train the model using new config</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="NER.html#6.2-Train-your-model-from-CLI">6.2 Train your model from CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="NER.html#7.-NER-tags-list">7. NER-tags list</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entity_extraction.html">Entity Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="entity_extraction.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="entity_extraction.html#Entity-Detection">Entity Detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="entity_extraction.html#Entity-Linking">Entity Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="entity_extraction.html#id1">Entity Extraction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="entity_extraction.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="entity_extraction.html#5.1-Description-of-config-parameters">5.1 Description of config parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="entity_extraction.html#5.2-Training-entity-detection-model">5.2 Training entity detection model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="entity_extraction.html#5.3-Using-custom-knowledge-base">5.3 Using custom knowledge base</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bert.html">BERT-based models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bert.html#bert-as-embedder">BERT as Embedder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bert.html#bert-for-classification">BERT for Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bert.html#bert-for-named-entity-recognition-sequence-tagging">BERT for Named Entity Recognition (Sequence Tagging)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bert.html#bert-for-context-question-answering-squad">BERT for Context Question Answering (SQuAD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bert.html#using-custom-bert-in-deeppavlov">Using custom BERT in DeepPavlov</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="morpho_tagger.html">Morphological Tagging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="morpho_tagger.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="morpho_tagger.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="morpho_tagger.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="morpho_tagger.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="morpho_tagger.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="morpho_tagger.html#4.1-Predict-using-Python">4.1 Predict using Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="morpho_tagger.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="morpho_tagger.html#5.-Customize-the-model">5. Customize the model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neural_ranking.html">Neural Ranking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="neural_ranking.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neural_ranking.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neural_ranking.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neural_ranking.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neural_ranking.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neural_ranking.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="neural_ranking.html#English">English</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neural_ranking.html#Russian">Russian</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="neural_ranking.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="neural_ranking.html#id1">English</a></li>
+<li class="toctree-l4"><a class="reference internal" href="neural_ranking.html#id2">Russian</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neural_ranking.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neural_ranking.html#id3">English</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neural_ranking.html#id4">Russian</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spelling_correction.html">Spelling Correction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="spelling_correction.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="spelling_correction.html#4.1.1-Levenshtein-corrector">4.1.1 Levenshtein corrector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spelling_correction.html#4.1.2-Brillmoore">4.1.2 Brillmoore</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="spelling_correction.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="spelling_correction.html#5.1-Training-configuration">5.1 Training configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spelling_correction.html#5.2-Language-model">5.2 Language model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="spelling_correction.html#6.-Comparison">6. Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="syntax_parser.html">Syntactic Parsing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="syntax_parser.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syntax_parser.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syntax_parser.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syntax_parser.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syntax_parser.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syntax_parser.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="syntax_parser.html#id1">Syntax Parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="syntax_parser.html#Joint-Syntax-Parser-and-Morphological-tagger">Joint Syntax Parser and Morphological tagger</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="syntax_parser.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syntax_parser.html#5.-Customize-the-model">5. Customize the model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tfidf_ranking.html">TF-IDF Ranking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tfidf_ranking.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfidf_ranking.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfidf_ranking.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfidf_ranking.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfidf_ranking.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tfidf_ranking.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tfidf_ranking.html#English">English</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tfidf_ranking.html#Russian">Russian</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tfidf_ranking.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tfidf_ranking.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tfidf_ranking.html#5.1-Fit-on-Wikipedia">5.1 Fit on Wikipedia</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tfidf_ranking.html#5.2-Download,-parse-new-Wikipedia-dump,-build-database-and-index">5.2 Download, parse new Wikipedia dump, build database and index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="popularity_ranking.html">Popularity Ranking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="popularity_ranking.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popularity_ranking.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popularity_ranking.html#running-the-ranker">Running the Ranker</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="popularity_ranking.html#interacting">Interacting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popularity_ranking.html#available-data-and-pretrained-models">Available Data and Pretrained Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popularity_ranking.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="KBQA.html">Knowledge Base Question answering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="KBQA.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="KBQA.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="KBQA.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="KBQA.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="KBQA.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="KBQA.html#4.1-Predict-using-Python">4.1 Predict using Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="KBQA.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="KBQA.html#4.3-Using-entity-linking-and-Wiki-parser-as-standalone-tools-for-KBQA">4.3 Using entity linking and Wiki parser as standalone tools for KBQA</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="KBQA.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="KBQA.html#5.1-Description-of-config-parameters">5.1 Description of config parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="KBQA.html#5.2-Train-KBQA-components">5.2 Train KBQA components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="KBQA.html#Train-Query-Prediction-Model">Train Query Prediction Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="KBQA.html#Train-Entity-Detection-Model">Train Entity Detection Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="KBQA.html#Train-Path-Ranking-Model">Train Path Ranking Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="KBQA.html#Adding-Templates-For-New-SPARQL-Queries">Adding Templates For New SPARQL Queries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relation_extraction.html">Relation Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#3.-Models-list">3. Models list</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#Some-details-on-DocRED-corpus-English-RE-model-was-trained-on">Some details on DocRED corpus English RE model was trained on</a></li>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#Some-details-on-RuRED-corpus-Russian-RE-model-was-trained-on">Some details on RuRED corpus Russian RE model was trained on</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="relation_extraction.html#English">English</a></li>
+<li class="toctree-l4"><a class="reference internal" href="relation_extraction.html#Russian">Russian</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#5.1-Description-of-config-parameters">5.1 Description of config parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#5.2-Train-Relation-Extraction-on-custom-data">5.2 Train Relation Extraction on custom data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="relation_extraction.html#Train-with-docred_reader">Train with <code class="docutils literal notranslate"><span class="pre">docred_reader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="relation_extraction.html#Train-with-rured_reader">Train with <code class="docutils literal notranslate"><span class="pre">rured_reader</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relation_extraction.html#Train-the-model-using-Python:">Train the model using Python:</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relation_extraction.html#6.-Relations-list">6. Relations list</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#6.1-Relations-used-in-English-model">6.1 Relations used in English model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="relation_extraction.html#6.2-Relations-used-in-Russian-model">6.2 Relations used in Russian model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="superglue.html">SuperGLUE Submission</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="superglue.html#task-definition">Task definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="superglue.html#train-your-model">Train your model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="superglue.html#create-your-submission-files">Create your submission files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="superglue.html#scores">Scores</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ODQA.html">Open-Domain Question Answering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ODQA.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ODQA.html#1.-Introduction-to-the-task">1. Introduction to the task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ODQA.html#2.-Get-started-with-the-model">2. Get started with the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ODQA.html#3.-Models-list">3. Models list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ODQA.html#4.-Use-the-model-for-prediction">4. Use the model for prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ODQA.html#4.1-Predict-using-Python">4.1 Predict using Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ODQA.html#English">English</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ODQA.html#Russian">Russian</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ODQA.html#4.2-Predict-using-CLI">4.2 Predict using CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ODQA.html#5.-Customize-the-model">5. Customize the model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ODQA.html#5.1-Description-of-config-parameters">5.1 Description of config parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ODQA.html#5.2-Building-the-index-and-training-the-reader-model">5.2 Building the index and training the reader model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integrations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/rest_api.html">REST API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/rest_api.html#api-routes">API routes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../integrations/rest_api.html#model">/model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../integrations/rest_api.html#probe">/probe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../integrations/rest_api.html#api">/api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../integrations/rest_api.html#docs">/docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../integrations/rest_api.html#metrics">/metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/rest_api.html#advanced-configuration">Advanced configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/rest_api.html#rest-api-usage-example">REST API Usage Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/socket_api.html">Socket API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/socket_api.html#advanced-configuration">Advanced configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/socket_api.html#socket-client-example-python">Socket client example (Python)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/aws_ec2.html">Amazon AWS deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/aws_ec2.html#aws-ec2-machine-launch">1. AWS EC2 machine launch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/aws_ec2.html#deeppavlov-odqa-deployment">2. DeepPavlov ODQA deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/aws_ec2.html#accessing-your-odqa-api">3. Accessing your ODQA API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/settings.html">DeepPavlov settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/settings.html#settings-files-access-and-management">1. Settings files access and management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/settings.html#dialog-logging">2. Dialog logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../integrations/settings.html#environment-variables">3. Environment variables</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../devguides/contribution_guide.html">Contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devguides/registry.html">Register your model</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Internships</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../internships/internships.html">Internships</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apiref/core.html">core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/core/commands.html">deeppavlov.core.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/core/common.html">deeppavlov.core.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/core/data.html">deeppavlov.core.data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/core/models.html">deeppavlov.core.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/core/trainers.html">deeppavlov.core.trainers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../apiref/dataset_iterators.html">dataset_iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apiref/dataset_readers.html">dataset_readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apiref/metrics.html">metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apiref/models.html">models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/api_requester.html">deeppavlov.models.api_requester</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/classifiers.html">deeppavlov.models.classifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/doc_retrieval.html">deeppavlov.models.doc_retrieval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/embedders.html">deeppavlov.models.embedders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/entity_extraction.html">deeppavlov.models.entity_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/kbqa.html">deeppavlov.models.kbqa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/preprocessors.html">deeppavlov.models.preprocessors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/relation_extraction.html">deeppavlov.models.relation_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/sklearn.html">deeppavlov.models.sklearn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/spelling_correction.html">deeppavlov.models.spelling_correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/tokenizers.html">deeppavlov.models.tokenizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/torch_bert.html">deeppavlov.models.torch_bert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apiref/models/vectorizers.html">deeppavlov.models.vectorizers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../apiref/vocabs.html">vocabs</a></li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">DeepPavlov</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+
+      <li>Multi-task BERT in DeepPavlov</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+
+              <a href="https://github.com/deeppavlov/DeepPavlov/blob/dev/docs/features/models/multitask_bert.rst" class="fa fa-github"> Edit on GitHub</a>
+
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="multi-task-bert-in-deeppavlov">
+<h1>Multi-task BERT in DeepPavlov<a class="headerlink" href="#multi-task-bert-in-deeppavlov" title="Permalink to this headline">¶</a></h1>
+<p>Multi-task BERT in DeepPavlov is an implementation of BERT training algorithm published in the paper
+<a class="reference external" href="https://www.dialog-21.ru/media/5902/karpovdpluskonovalovv002.pdf">Knowledge Transfer Between Tasks and Languages in the Multi-task
+Encoder-agnostic Transformer-based Models</a>.</p>
+<p>The idea is to share BERT body between several tasks. This is necessary if a model pipe has several
+components using BERT and the amount of GPU memory is limited. Each task has its own ‘head’ part attached to the
+output of the BERT encoder. If multi-task BERT has <span class="math notranslate nohighlight">\(T\)</span> heads, one training iteration consists of</p>
+<ul class="simple">
+<li><p>composing <span class="math notranslate nohighlight">\(T\)</span> lists of examples, one for each task,</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> gradient steps, one gradient step for each task.</p></li>
+</ul>
+<p>By default, on every training steps lists of examples for all but one tasks are empty, as if in the original MT-DNN repository.</p>
+<p>When one of BERT heads is being trained, other heads’ parameters do not change. On each training step both BERT head
+and body parameters are modified.</p>
+<p>Currently multitask bert heads support classification, regression, NER and multiple choice tasks.</p>
+<p>At this page, multi-task BERT usage is explained on a toy configuration file of a model that is trained for the
+single-sentence classification, sentence pair classification, regression, multiple choice and NER.
+The config for this model is <a class="reference external" href="https://github.com/deeppavlov/DeepPavlov/blob/1.5.0/deeppavlov/configs/configs/multitask/multitask_example.json">multitask_example</a>.</p>
+<p>Other examples of using multitask models can be found in <a class="reference external" href="https://github.com/deeppavlov/DeepPavlov/blob/1.5.0/deeppavlov/configs/configs/multitask/mt_glue.json">mt_glue</a>.</p>
+<div class="section" id="train-config">
+<h2>Train config<a class="headerlink" href="#train-config" title="Permalink to this headline">¶</a></h2>
+<p>When using <code class="docutils literal notranslate"><span class="pre">multitask_transformer</span></code> component, you can use the same inference file as the train file.</p>
+<p>Data reading and iteration is performed by <a class="reference internal" href="../../apiref/dataset_readers.html#deeppavlov.dataset_readers.multitask_reader.MultiTaskReader" title="deeppavlov.dataset_readers.multitask_reader.MultiTaskReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiTaskReader</span></code></a>
+and <a class="reference internal" href="../../apiref/dataset_iterators.html#deeppavlov.dataset_iterators.multitask_iterator.MultiTaskIterator" title="deeppavlov.dataset_iterators.multitask_iterator.MultiTaskIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiTaskIterator</span></code></a>. These classes are composed
+of task readers and iterators and generate batches that contain data from heterogeneous datasets. Example below
+demonstrates the usage of multitask dataset reader:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;dataset_reader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multitask_reader&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;task_defaults&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;huggingface_dataset_reader&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;glue&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;train&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;valid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;validation&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;test&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;tasks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;cola&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cola&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;copa&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;super_glue&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copa&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;conll&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conll2003_reader&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;use_task_defaults&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;data_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{DOWNLOADS_PATH}/conll2003/&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;dataset_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conll2003&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;provide_pos&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Nested dataset readers are listed in the <code class="docutils literal notranslate"><span class="pre">tasks</span></code> section. By default, default nested readers parameters are taken from
+<code class="docutils literal notranslate"><span class="pre">task_defaults</span></code> section. Values from the <code class="docutils literal notranslate"><span class="pre">tasks</span></code> could complement parameters, like <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter in the
+<code class="docutils literal notranslate"><span class="pre">dataset_reader.tasks.cola</span></code>, and could overwrite default parameter values, like <code class="docutils literal notranslate"><span class="pre">path</span></code> parameter from
+<code class="docutils literal notranslate"><span class="pre">dataset_reader.tasks.copa</span></code>. In the <code class="docutils literal notranslate"><span class="pre">dataset_reader.tasks.conll</span></code> <code class="docutils literal notranslate"><span class="pre">use_task_defaults</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>. This is special
+parameter, that forces <code class="docutils literal notranslate"><span class="pre">multitask_reader</span></code> to ignore <code class="docutils literal notranslate"><span class="pre">task_defaults</span></code> while creating nested reader, which means that
+dataset reader for <code class="docutils literal notranslate"><span class="pre">conll</span></code> task will use only parameters from <code class="docutils literal notranslate"><span class="pre">dataset_reader.tasks.conll</span></code>.</p>
+<p>The same principle with default values applies to <code class="docutils literal notranslate"><span class="pre">multitask_iterator</span></code>.</p>
+<p>Batches generated by <code class="docutils literal notranslate"><span class="pre">multitask_iterator</span></code> are tuples of two elements: inputs of the model and labels.
+Both inputsand labels are lists of tuples. The inputs have following format:
+<code class="docutils literal notranslate"><span class="pre">[(first_task_inputs[0],</span> <span class="pre">second_task_inputs[0],...),</span> <span class="pre">(first_task_inputs[1],</span> <span class="pre">second_task_inputs[1],</span> <span class="pre">...),</span> <span class="pre">...]</span></code>
+where <code class="docutils literal notranslate"><span class="pre">first_task_inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">second_task_inputs</span></code>, and so on are x values of batches from task dataset iterators.
+The labels in the second element have the similar format.</p>
+<p>If task datasets have different sizes, then for smaller datasets the lists are padded with <code class="docutils literal notranslate"><span class="pre">None</span></code> values. For example,
+if the first task dataset inputs are <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6]</span></code>, the second task dataset inputs are <code class="docutils literal notranslate"><span class="pre">[7,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>,
+and the batch size is <code class="docutils literal notranslate"><span class="pre">2</span></code>, then multi-task input mini-batches will be <code class="docutils literal notranslate"><span class="pre">[(0,</span> <span class="pre">7),</span> <span class="pre">(1,</span> <span class="pre">8)]</span></code>, <code class="docutils literal notranslate"><span class="pre">[(2,</span> <span class="pre">9),</span> <span class="pre">(3,</span> <span class="pre">None)]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">[(4,</span> <span class="pre">None),</span> <span class="pre">(5,</span> <span class="pre">None)]</span></code>, <code class="docutils literal notranslate"><span class="pre">[(6,</span> <span class="pre">None)]</span></code>.</p>
+<p>In this tutorial, there are 5 datasets. Considering the batch structure, <code class="docutils literal notranslate"><span class="pre">chainer</span></code> inputs in
+<a class="reference external" href="https://github.com/deeppavlov/DeepPavlov/blob/1.5.0/deeppavlov/configs/configs/multitask/multitask_example.json">multitask_example</a> are:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;x_cola&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_rte&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_stsb&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_copa&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_conll&quot;</span><span class="p">],</span>
+<span class="nt">&quot;in_y&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;y_cola&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_rte&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_stsb&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_copa&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_conll&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Sometimes a task dataset iterator returns inputs or labels consisting of more than one element. For example, in the
+model input element could consist of two strings. If there is a necessity to split such a variable, <code class="docutils literal notranslate"><span class="pre">InputSplitter</span></code>
+component can be used. Data preparation in the multitask setting can be similar to the preparation in singletask setting
+except for the names of the variables.</p>
+<p>For streamlining the code, however, <code class="docutils literal notranslate"><span class="pre">input_splitter</span></code> and <code class="docutils literal notranslate"><span class="pre">tokenizer</span></code> can be unified into the
+<code class="docutils literal notranslate"><span class="pre">multitask_pipeline_preprocessor</span></code>. This preprocessor gets as a parameter <code class="docutils literal notranslate"><span class="pre">preprocessor</span></code> the one preprocessor class
+name for all tasks, or gets the preprocessor name list as a parameter <code class="docutils literal notranslate"><span class="pre">preprocessors</span></code>. After splitting input by
+<code class="docutils literal notranslate"><span class="pre">possible_keys_to_extract</span></code>, every preprocessor (being initialized by the input beforehand) processes the input.
+Note, that if <code class="docutils literal notranslate"><span class="pre">strict</span></code> parameter(default:False) is set to True, we always try to split data. Here is the definition of
+<code class="docutils literal notranslate"><span class="pre">multitask_pipeline_preprocessor</span></code> from the <a class="reference external" href="https://github.com/deeppavlov/DeepPavlov/blob/1.5.0/deeppavlov/configs/configs/multitask/multitask_example.json">multitask_example</a>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multitask_pipeline_preprocessor&quot;</span><span class="p">,</span>
+<span class="nt">&quot;possible_keys_to_extract&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="nt">&quot;preprocessors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="s2">&quot;TorchTransformersPreprocessor&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;TorchTransformersPreprocessor&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;TorchTransformersPreprocessor&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;TorchTransformersMultiplechoicePreprocessor&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;TorchTransformersNerPreprocessor&quot;</span>
+<span class="p">],</span>
+<span class="nt">&quot;do_lower_case&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="nt">&quot;n_task&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="nt">&quot;vocab_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{BACKBONE}&quot;</span><span class="p">,</span>
+<span class="nt">&quot;max_seq_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="nt">&quot;max_subword_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span>
+<span class="nt">&quot;token_masking_prob&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="nt">&quot;return_features&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;x_cola&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_rte&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_stsb&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_copa&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x_conll&quot;</span><span class="p">],</span>
+<span class="nt">&quot;out&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_cola&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_rte&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_stsb&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_copa&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_conll&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">multitask_transformer</span></code> component has common and task-specific parameters. Shared parameters are provided inside
+the tasks parameter. The tasks is a dictionary that keys are task names and values are task-specific parameters (type,
+options). Common parameters, are backbone_model(same parameter as in the tokenizer) and all parameters from torch_bert.
+<strong>The order of tasks MATTERS.</strong></p>
+<p>Here is the definition of <code class="docutils literal notranslate"><span class="pre">multitask_transformer</span></code> from the <a class="reference external" href="https://github.com/deeppavlov/DeepPavlov/blob/1.5.0/deeppavlov/configs/configs/multitask/multitask_example.json">multitask_example</a>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multitask_transformer&quot;</span><span class="p">,</span>
+<span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multitask_transformer&quot;</span><span class="p">,</span>
+<span class="nt">&quot;optimizer_parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2e-5</span><span class="p">},</span>
+<span class="nt">&quot;gradient_accumulation_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{GRADIENT_ACC_STEPS}&quot;</span><span class="p">,</span>
+<span class="nt">&quot;learning_rate_drop_patience&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="nt">&quot;learning_rate_drop_div&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="nt">&quot;return_probas&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="nt">&quot;backbone_model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{BACKBONE}&quot;</span><span class="p">,</span>
+<span class="nt">&quot;save_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{MODEL_PATH}&quot;</span><span class="p">,</span>
+<span class="nt">&quot;load_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{MODEL_PATH}&quot;</span><span class="p">,</span>
+<span class="nt">&quot;tasks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;cola&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;classification&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;rte&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;classification&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;stsb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;regression&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;copa&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multiple_choice&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;conll&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sequence_labeling&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#vocab_conll.len&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">},</span>
+<span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_cola&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_rte&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_stsb&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_copa&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;bert_features_conll&quot;</span>
+<span class="p">],</span>
+<span class="nt">&quot;in_y&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;y_cola&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_rte&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_stsb&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_copa&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_ids_conll&quot;</span><span class="p">],</span>
+<span class="nt">&quot;out&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="s2">&quot;y_cola_pred_probas&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;y_rte_pred_probas&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;y_stsb_pred&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;y_copa_pred_probas&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;y_conll_pred_ids&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">proba2labels</span></code> can now take several arguments.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;in&quot;</span><span class="p">:[</span><span class="s2">&quot;y_cola_pred_probas&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_rte_pred_probas&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_copa_pred_probas&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;out&quot;</span><span class="p">:[</span><span class="s2">&quot;y_cola_pred_ids&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_rte_pred_ids&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y_copa_pred_ids&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="s2">&quot;proba2labels&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_proba&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You may need to create your own metric for early stopping. In this example, the target metric is an average of AUC ROC
+for insults and sentiment tasks and F1 for NER task:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">deeppavlov.metrics.roc_auc_score</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+<span class="k">def</span> <span class="nf">roc_auc__roc_auc__ner_f1</span><span class="p">(</span><span class="n">true_onehot1</span><span class="p">,</span> <span class="n">pred_probas1</span><span class="p">,</span> <span class="n">true_onehot2</span><span class="p">,</span> <span class="n">pred_probas2</span><span class="p">,</span> <span class="n">ner_true3</span><span class="p">,</span> <span class="n">ner_pred3</span><span class="p">):</span>
+    <span class="n">roc_auc1</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">true_onehot1</span><span class="p">,</span> <span class="n">pred_probas1</span><span class="p">)</span>
+    <span class="n">roc_auc2</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">true_onehot2</span><span class="p">,</span> <span class="n">pred_probas2</span><span class="p">)</span>
+    <span class="n">ner_f1_3</span> <span class="o">=</span> <span class="n">ner_f1</span><span class="p">(</span><span class="n">ner_true3</span><span class="p">,</span> <span class="n">ner_pred3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">roc_auc1</span> <span class="o">+</span> <span class="n">roc_auc2</span> <span class="o">+</span> <span class="n">ner_f1_3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>It he code above will be saved at <code class="docutils literal notranslate"><span class="pre">custom_metric.py</span></code>, metric could be used in the config as
+<code class="docutils literal notranslate"><span class="pre">custom_metric:roc_auc__roc_auc__ner_f1</span></code> (<code class="docutils literal notranslate"><span class="pre">module.submodules:function_name</span></code> reference format).</p>
+<p>You can make an inference-only config. In this config, there is no need in dataset reader and dataset iterator.
+A <code class="docutils literal notranslate"><span class="pre">train</span></code> field and components preparing <code class="docutils literal notranslate"><span class="pre">in_y</span></code> are removed. In <code class="docutils literal notranslate"><span class="pre">multitask_transformer</span></code> component configuration
+all training parameters (learning rate, optimizer, etc.) are omitted.</p>
+<p>Here are the results of <code class="docutils literal notranslate"><span class="pre">deeppavlov/configs/multitask/mt_glue.json</span></code> compared to the analogous single-task configs,
+according to the test server.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 14%" />
+<col style="width: 9%" />
+<col style="width: 8%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Task</p></th>
+<th class="head"><p>Score</p></th>
+<th class="head"><p>CoLA</p></th>
+<th class="head"><p>SST-2</p></th>
+<th class="head"><p>MRPC</p></th>
+<th class="head"><p>STS-B</p></th>
+<th class="head"><p>QQP</p></th>
+<th class="head"><p>MNLI(m/mm)</p></th>
+<th class="head"><p>QNLI</p></th>
+<th class="head"><p>RTE</p></th>
+<th class="head"><p>AX</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>Metric</p></th>
+<th class="head"><p>from server</p></th>
+<th class="head"><p>Matthew’s Corr</p></th>
+<th class="head"><p>Accuracy</p></th>
+<th class="head"><p>F1 / Accuracy</p></th>
+<th class="head"><p>Pearson/Spearman Corr</p></th>
+<th class="head"><p>F1 / Accuracy</p></th>
+<th class="head"><p>Accuracy</p></th>
+<th class="head"><p>Accuracy</p></th>
+<th class="head"><p>Accuracy</p></th>
+<th class="head"><p>Matthew’s Corr</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>Multitask config</p></td>
+<td><p>77.8</p></td>
+<td><p>43.6</p></td>
+<td><p>93.2</p></td>
+<td><p>88.6/84.2</p></td>
+<td><p>84.3/84.0</p></td>
+<td><p>70.1/87.9</p></td>
+<td><p>83.0/82.6</p></td>
+<td><p>90.6</p></td>
+<td><p>75.4</p></td>
+<td><p>35.4</p></td>
+</tr>
+<tr class="row-even"><td><p>Singletask config</p></td>
+<td><p>77.6</p></td>
+<td><p>53.6</p></td>
+<td><p>92.7</p></td>
+<td><p>87.7/83.6</p></td>
+<td><p>84.4/83.1</p></td>
+<td><p>70.5/88.9</p></td>
+<td><p>84.4/83.2</p></td>
+<td><p>90.3</p></td>
+<td><p>63.4</p></td>
+<td><p>36.3</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+
+          </div>
+
+
+<footer>
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript" >
+     (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+     m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+     (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+     ym(72484825, "init", {
+          clickmap:true,
+          trackLinks:true,
+          accurateTrackBounce:true,
+          webvisor:true
+     });
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/72484825" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+
+        <a href="SQuAD.html" class="btn btn-neutral float-right" title="Context Question Answering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+
+
+        <a href="../hypersearch.html" class="btn btn-neutral float-left" title="Hyperparameters optimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+
+    </div>
+
+
+  <hr/>
+
+  <div role="contentinfo">
+        <p>Problem? <a href="https://forum.deeppavlov.ai">Ask a Question</a> or <a href="https://demo.deeppavlov.ai/">try our Demo</a></p>
+        <p>
+            <a href="https://medium.com/deeppavlov"><img style="width: 30px; height: 30px;" src="../../_static/social/Medium_Monogram.svg" alt="medium"></a>
+            <a href="https://twitter.com/deeppavlov"><img style="width: 30px; height: 30px;" src="../../_static/social/Twitter_Social_Icon_Circle_Color.svg" alt="twitter"></a>
+            <a href="https://www.youtube.com/channel/UCJ-6K2HGA0hpQytlSM7FBVQ"><img style="width: 30px; height: 30px;" src="../../_static/social/youtube_social_circle_red.png" alt="youtube"></a>
+            <a href="https://t.me/deeppavlov"><img style="width: 30px; height: 30px;" src="../../_static/social/telegram.png" alt="medium"></a>
+        </p>
+
+    <p>
+
+        &copy; Copyright 2018, Neural Networks and Deep Learning lab, MIPT
+      <span class="commit">
+        Revision <code>926f7a7c</code>.
+      </span>
+
+    </p>
+  </div>
+
+
+      Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+
+          <dd><a href="/en/master/">master</a></dd>
+
+          <dd><a href="/en/latest/">latest</a></dd>
+
+          <dd><a href="/en/1.4.0/">1.4.0</a></dd>
+
+          <dd><a href="/en/1.2.0/">1.2.0</a></dd>
+
+          <dd><a href="/en/1.1.1/">1.1.1</a></dd>
+
+          <dd><a href="/en/1.0.2/">1.0.2</a></dd>
+
+          <dd><a href="/en/1.0.1/">1.0.1</a></dd>
+
+          <dd><a href="/en/1.0.0/">1.0.0</a></dd>
+
+          <dd><a href="/en/1.0.0rc1/">1.0.0rc1</a></dd>
+
+          <dd><a href="/en/1.0.0rc0/">1.0.0rc0</a></dd>
+
+          <dd><a href="/en/0.17.6/">0.17.6</a></dd>
+
+          <dd><a href="/en/0.17.5/">0.17.5</a></dd>
+
+          <dd><a href="/en/0.17.4/">0.17.4</a></dd>
+
+          <dd><a href="/en/0.17.3/">0.17.3</a></dd>
+
+          <dd><a href="/en/0.17.2/">0.17.2</a></dd>
+
+          <dd><a href="/en/0.17.1/">0.17.1</a></dd>
+
+          <dd><a href="/en/0.17.0/">0.17.0</a></dd>
+
+          <dd><a href="/en/0.16.0/">0.16.0</a></dd>
+
+          <dd><a href="/en/0.15.0/">0.15.0</a></dd>
+
+          <dd><a href="/en/0.14.1/">0.14.1</a></dd>
+
+          <dd><a href="/en/0.14.0/">0.14.0</a></dd>
+
+          <dd><a href="/en/0.13.0/">0.13.0</a></dd>
+
+          <dd><a href="/en/0.12.1/">0.12.1</a></dd>
+
+          <dd><a href="/en/0.12.0/">0.12.0</a></dd>
+
+          <dd><a href="/en/0.11.0/">0.11.0</a></dd>
+
+          <dd><a href="/en/0.10.0/">0.10.0</a></dd>
+
+          <dd><a href="/en/0.9.1/">0.9.1</a></dd>
+
+          <dd><a href="/en/0.9.0/">0.9.0</a></dd>
+
+          <dd><a href="/en/0.8.0/">0.8.0</a></dd>
+
+          <dd><a href="/en/0.7.1/">0.7.1</a></dd>
+
+          <dd><a href="/en/0.7.0/">0.7.0</a></dd>
+
+          <dd><a href="/en/0.6.0/">0.6.0</a></dd>
+
+          <dd><a href="/en/0.5.1/">0.5.1</a></dd>
+
+          <dd><a href="/en/0.5.0/">0.5.0</a></dd>
+
+          <dd><a href="/en/0.4.0/">0.4.0</a></dd>
+
+          <dd><a href="/en/0.3.1/">0.3.1</a></dd>
+
+          <dd><a href="/en/0.3.0/">0.3.0</a></dd>
+
+          <dd><a href="/en/0.2.0/">0.2.0</a></dd>
+
+          <dd><a href="/en/0.1.6/">0.1.6</a></dd>
+
+          <dd><a href="/en/0.1.5.1/">0.1.5.1</a></dd>
+
+          <dd><a href="/en/0.1.5/">0.1.5</a></dd>
+
+          <dd><a href="/en/0.1.1/">0.1.1</a></dd>
+
+          <dd><a href="/en/fix-docs/">fix-docs</a></dd>
+
+          <dd><a href="/en/0.1.0/">0.1.0</a></dd>
+
+          <dd><a href="/en/0.0.9/">0.0.9</a></dd>
+
+          <dd><a href="/en/0.0.8/">0.0.8</a></dd>
+
+          <dd><a href="/en/0.0.7/">0.0.7</a></dd>
+
+          <dd><a href="/en/0.0.6.5/">0.0.6.5</a></dd>
+
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+
+      </dl>
+      <dl>
+
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="//readthedocs.org/projects/deeppavlov/?fromdocs=deeppavlov">Project Home</a>
+          </dd>
+          <dd>
+            <a href="//readthedocs.org/builds/deeppavlov/?fromdocs=deeppavlov">Builds</a>
+          </dd>
+      </dl>
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+</body>
+</html>
